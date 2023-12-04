@@ -17,20 +17,42 @@ def get_adjacent_symbol_matrix(location: tuple, schematic_matrix: list):
 	return [list(map(is_digit, element[location[1]-1:location[1]+2])) for element in schematic_matrix[location[0]-1:location[0]+2]]
 	
 def get_mask_adjacent_digit_matrix(symbol_locations_list: list, schematic_matrix: list):
-	mask_matrix = [[0 for row in range(len(schematic_matrix[0]))] for column in range(len(schematic_matrix)) ]
-	#print (f'mask_matrix {mask_matrix}')
-	#print (f'mask_matrix index {mask_matrix[0][0]}')
+	mask_matrix = [[0 for row in range(len(schematic_matrix[0]))] for column in range(len(schematic_matrix))]
 	for symbol_location in symbol_locations_list:
 		adjacent_symbol_matrix = get_adjacent_symbol_matrix(symbol_location, schematic_matrix)
-		#print (f'adjacent_symbol_matrix {adjacent_symbol_matrix}')
 		for row_index, row in enumerate(range(symbol_location[0]-1, symbol_location[0]+2)):
 			for column_index, column in enumerate(range(symbol_location[1]-1, symbol_location[1]+2)):
-				#print (f'row_index {row_index}, row {row}, column_index {column_index}, column {column}, mask_matrix[row][column] {mask_matrix[row][column]}, adjacent_symbol_matrix[row_index][column_index] {adjacent_symbol_matrix[row_index][column_index]}')
 				mask_matrix[row][column] = adjacent_symbol_matrix[row_index][column_index]
-				#print(f'adjacent_symbol_matrix {adjacent_symbol_matrix[row_index][column_index]}')
-				#print(f'mask_matrix during transform {mask_matrix}')
-	print(f'mask_matrix after transform {mask_matrix}')
 	return mask_matrix
+
+def get_part_numbers_per_line(line, mask):
+	numbers = []
+	number = ''
+	number_to_append = False
+	last_index = len(line) -1 
+	for index, (item_line, masked) in enumerate(zip(line, mask)):
+		#print (f'item line {item_line}')
+		if item_line.isdigit():
+			number += item_line
+			if masked == 1:
+				number_to_append = True
+		if index is last_index or not item_line.isdigit():
+			if not number_to_append:
+				number = ''
+			elif number:
+				numbers.append(int(number))
+				number_to_append = False
+				number = ''
+	return numbers
+
+
+def get_part_numbers(schematic_matrix, mask_adjacent_digit_matrix):
+	part_numbers = []
+	for index_line, line in enumerate(schematic_matrix):
+		for number in get_part_numbers_per_line(line, mask_adjacent_digit_matrix[index_line]):
+			part_numbers.append(number)
+	return  part_numbers
+
 
 def format_schematic_line(schematic_line: str):
 	formatted_schematic_line = schematic_line.strip()
@@ -42,11 +64,8 @@ if __name__ == '__main__':
 		schematic_lines = file.readlines()
 		formatted_schematic_lines = list(map(format_schematic_line, schematic_lines))
 		schematic_matrix = [[element for element in line ] for line in formatted_schematic_lines]
-		#print (schematic_matrix)
-		#schematic_matrix = [['1', '2', '3'], ['.', '*', '.'], ['7', '8', '9']]
-		#print(is_symbol('9'))
 		symbol_locations = get_symbol_locations(schematic_matrix)
-		print(f'symbol_locations {symbol_locations[0]}')
-		print(f'get_adjacent_symbol_matrix {get_adjacent_symbol_matrix(symbol_locations[0], schematic_matrix)}')
-		print(get_mask_adjacent_digit_matrix(symbol_locations, schematic_matrix))
+		mask_adjacent_digit_matrix = get_mask_adjacent_digit_matrix(symbol_locations, schematic_matrix)
+		part_numbers = get_part_numbers(schematic_matrix, mask_adjacent_digit_matrix)
+		print(f'sum {sum(part_numbers)}')
 		
