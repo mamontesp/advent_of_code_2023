@@ -19,22 +19,41 @@ def get_mult_winning_ways(winning_ways: list):
 		mult *= ww
 	return mult
 
+def part_1(records: list):
+	time_list = records[0].strip('Time:\t').strip('\n').split()
+	distance_list = records[1].strip('Distance:\t').strip('\n').split()
+	print(f'time_list {time_list}')
+	print(f'distance_list {distance_list}')
+
+	races = get_races(time_list, distance_list)
+	winning_ways = list(map(get_winning_ways, races))
+	mult_ww = get_mult_winning_ways(winning_ways)
+
+	print(f'races {races}')
+	print(f'winning_ways {winning_ways}')
+	print(f'multiplication {mult_ww}')
+
+
+def part_2(records: list):
+	time_list = [int(records[0].strip('Time:\t').strip('\n').replace(' ', ''))]
+	distance_list = [int(records[1].strip('Distance:\t').strip('\n').replace(' ', ''))]
+	print(f'time_list {time_list}')
+	print(f'distance_list {distance_list}')
+	races = get_races(time_list, distance_list)
+	winning_ways = list(map(get_winning_ways, races))
+	mult_ww = get_mult_winning_ways(winning_ways)
+
+	print(f'races {races}')
+	print(f'winning_ways {winning_ways}')
+	print(f'multiplication {mult_ww}')
+
 if __name__ == '__main__':
 	file = open("6_day_input.txt", 'r')
 	#file = open("6_test_input.txt", 'r')
 	with file:
 		records = file.readlines()
-		time_list = records[0].strip('Time:\t').strip('\n').split()
-		distance_list = records[1].strip('Distance:\t').strip('\n').split()
-		print(f'time_list {time_list}')
-		print(f'distance_list {distance_list}')
-
-		races = get_races(time_list, distance_list)
-		winning_ways = list(map(get_winning_ways, races))
-		mult_ww = get_mult_winning_ways(winning_ways)
-
-		print(f'races {races}')
-		print(f'winning_ways {winning_ways}')
-		print(f'multiplication {mult_ww}')
+		part_1(records)
+		part_2(records)
+		
 
 
