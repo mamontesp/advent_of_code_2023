@@ -6,13 +6,25 @@ def get_formatted_hands(line: str):
 	return hand
 
 def get_hand_type(hand_bid: list):
+	#print(f'get_hand_type {hand_bid}')
 	hand = hand_bid[0]
 	distinct_cards_in_hand = set(hand)	
 	counts = []
-	for distinct_card in distinct_cards_in_hand:
-		counts.append(hand.count(distinct_card))
 	has_j = 'J' in hand
-	
+	for distinct_card in distinct_cards_in_hand:
+		if distinct_card == 'J':
+			continue
+		counts.append(hand.count(distinct_card))
+
+	if has_j:
+		j_count = hand.count('J')
+		if j_count != 5:
+			max_count = max(counts)
+			counts.remove(max_count)
+			counts.append(max_count + j_count)
+		else: 
+			counts.append(5)
+
 	if 5 in counts:
 		return [hand_bid[0], hand_bid[1], hand_types['Five of a kind'], 'Five of a kind']
 	if 4 in counts:
@@ -34,8 +46,9 @@ def get_hand_type(hand_bid: list):
 
 def get_ordered_hands_same_type(hands_same_type: list):
 	#print (f'hands_same_type {hands_same_type}')
-	cards = ['x','A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
-	ordered_hands = sorted(hands_same_type, key = lambda x: cards.index(x[0][0])*(13**4) + cards.index(x[0][1])*(13**3)+ cards.index(x[0][2])*(13**2) + cards.index(x[0][3])*(13**1) + cards.index(x[0][4])*(13**0), reverse = True)
+	#cards_order = ['x','A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
+	cards_order = ['x','A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J']
+	ordered_hands = sorted(hands_same_type, key = lambda x: cards_order.index(x[0][0])*(13**4) + cards_order.index(x[0][1])*(13**3)+ cards_order.index(x[0][2])*(13**2) + cards_order.index(x[0][3])*(13**1) + cards_order.index(x[0][4])*(13**0), reverse = True)
 	return ordered_hands
 
 def get_ordered_hands(hands: list):
@@ -53,7 +66,6 @@ def get_ordered_hands(hands: list):
 
 def get_bids_per_rank(hand: list):
 	return (hand[0] + 1) * hand[1][1]
-
 
 if __name__ == '__main__':
 	file = open("7_day_input.txt", 'r')
