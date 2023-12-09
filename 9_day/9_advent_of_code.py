@@ -16,7 +16,7 @@ def predict_next_reading(readings: list):
 		number_to_append = list_differences[index][-1] + list_differences[index-1][-1] 
 		list_differences[index - 1].append(number_to_append)
 
-	print(f'list_differences {list_differences}')
+	#print(f'list_differences {list_differences}')
 	return list_differences[0][-1]
 
 
